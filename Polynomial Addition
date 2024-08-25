@@ -1,0 +1,107 @@
+A polynomial is an expression formed by the sum of products of unknown variable 
+x, coefficients, and exponents
+Each term of the polynomial is composed of a coefficient ai ​and an exponent i with x as the base, forming the following expression：
+As defined in middle school, polynomial addition is the process of adding the coefficients corresponding to each exponent,
+In this problem, we will be given two polynomials; please output the result after their addition (as shown in the example)
+
+Input
+Each test case contains 2 polynomials：
+Each polynomial begins with an integer 
+N, representing the number of non-zero terms in the polynomial；
+0≤N≤1,000.
+All input numbers do not exceed 1,000.
+All coefficients and all exponents are non-negative.
+
+Output
+As in the example, output a single line polynomial.
+Sample Input 1 
+
+2
+2 2
+1 0
+3
+1 3
+2 2
+3 1
+Sample Output 1
+
+x^3+4x^2+3x+1
+Sample Input 2 
+
+3
+3 3
+2 1
+1 0
+2
+1 2
+2 1
+Sample Output 2
+
+3x^3+x^2+4x+1
+
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    int N;
+    const int MAX_EXPONENT = 1000;  // 假設指數不會超過 1000
+
+    // Create a vector to store the polynomial, where index is the exponent and value is the coefficient
+    vector<int> polynomial(MAX_EXPONENT+1,0);  // 初始化每個係數為 0
+
+    // Read the first polynomial
+    cin >> N;
+    for (int i = 0; i < N; i++) {
+        int coefficient, exponent;
+        cin >> coefficient >> exponent;
+        polynomial[exponent] = coefficient;
+    }
+
+    // Read the second polynomial
+  	int M;
+    cin >> M;
+    for (int i = 0; i < M; i++) {
+        int coefficient1, exponent1;
+        cin >> coefficient1 >> exponent1;
+        polynomial[exponent1] += coefficient1;
+    }
+
+    // Output the resulting polynomial
+    bool firstTerm = true;
+    for (int i = MAX_EXPONENT; i >= 0; i--) 
+      // 逆序遍歷
+        if (polynomial[i] != 0) {
+            if (!firstTerm) {
+                cout << "+";
+            }
+            if (i == 0) {  // 次方是0, 直接印出係數，也就是數值
+                cout << polynomial[i];
+            } else if (i == 1) { // 次方是1, 
+                cout << polynomial[i] << "x";
+            } else { // 次方是1以上，不包含1
+                if (polynomial[i] == 1)   // 係數是1
+                    cout << "x^" << i;
+                //else if (polynomial[i] == -1)  // 係數是 -1 或是 1，因為我們通常不會把係數是 1 或是 -1 的時候寫出來
+                    //cout << "-x^" << i;
+                else
+                    cout << polynomial[i] << "x^" << i;
+            }
+            firstTerm = false;
+        }
+    }
+
+    if (firstTerm) {  // 多項式個別係數相加後等於0
+        cout << "0";
+    }
+    
+    cout << endl;
+
+    return 0;
+}
+
+
+
+
+

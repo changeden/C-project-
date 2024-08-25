@@ -1,0 +1,91 @@
+In the wild, a group of cats lives together, taking care of one another and gradually developing a social structure. Their diet isn't limited to mice; it also includes squirrels, rabbits, and other small animals. During spring and summer, food is plentiful. However, as autumn and winter approach, food becomes scarce, and there's not enough to feed all the cats. Therefore, the cats eat in a specific order based on their roles within the group：
+
+Elders (those who have contributed a lot to the group)
+Nursing mothers
+Kits (young cats)
+Warriors
+Apprentices
+Medicine cats
+Deputy
+Leader
+
+In the cat group tradition, the roles of the medicine cat, deputy, and leader are each held by a different cat. For other cats, except for apprentices who are prioritized by age (younger first), they are ordered by age (older first). If two cats have the same role and age, their names are sorted lexicographically. Given the number of cats 
+N, the amount of food M, and each cat's information (name, role, age in months), output the order in which the cats receive food. Each cat can only consume one portion of food.
+Input
+There are multiple test cases. The first line of each test case contains two integers N and M, where N is the number of cats and 
+M is the amount of food. This is followed by N lines, each line providing information for each cat in the format: name, role, and age.
+It is given that
+1≤N≤10000,1≤M≤10000. The length of names does not exceed 30 characters, names contain no spaces, and are in English. The role is one of the specified English words, and age is a positive integer.
+
+Output
+ Please output the order in which the cats can enjoy the food, with each name on a separate line.
+Sample Input 1 
+
+5 3
+Firestar leader 36
+Dovekit kit 3
+Leafpool warrior 20
+Mousefur elder 40
+Graystripe warrior 36
+Sample Output 1
+
+Mousefur
+Dovekit
+Graystripe
+
+
+#include <iostream>
+#include <vector>
+#include <map>
+#include <algorithm>
+using namespace std;
+
+struct cat
+{
+    string name;
+    string role;
+    int age;
+};
+
+bool cmp(cat &a, cat &b)
+{
+    map<string, int> roles = {
+        {"elder", 1},
+        {"nursy", 2},
+        {"kit", 3},
+        {"warrior", 4},
+        {"apprentice", 5},
+        {"medicent", 6},
+        {"deputy", 7},
+        {"leader", 8},
+    };
+
+    if (roles.at(a.role) != roles.at(b.role))
+    {
+        return roles.at(a.role) < roles.at(b.role);
+    }
+    if (a.role == "apprentice" && a.age != b.age){
+        return a.age < b.age;}
+    if (a.age != b.age){
+        return a.age > b.age;
+    }
+    return a.name < b.name;
+    
+}
+int main()
+{
+    int n, m;
+    cin >> n >> m;
+    vector<cat> cats(n);
+    for (int i = 0; i < n; ++i)
+    {
+        cin >> cats[i].name >> cats[i].role >> cats[i].age;
+    }
+    sort(cats.begin(), cats.end(), cmp);
+
+    for ( int i =0; i < min(n,m); ++i)
+    {
+        cout << cats[i].name << endl;
+    }
+    return 0;
+}

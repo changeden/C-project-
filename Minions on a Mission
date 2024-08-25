@@ -1,0 +1,97 @@
+Description
+Minions have prepared an evil plan to steal the computers for the programming exam, thus preventing the exam from taking place.
+However, the minions are very mischievous, and without proper task allocation, the mission might fail. Therefore, before assigning tasks, they want to line up the minions properly.
+
+The method for organizing the team is to sort the minions according to their characteristics in the following order. For any two minions, compare based on the first different characteristic from top to bottom in the rules list：
+
+1. Height from shortest to tallest
+2. Number of hair strands from most to fewest
+3. Age from youngest to oldest
+4. Number of eyes from most to fewest
+5. Name in alphabetical order
+
+Given the data of all the minions, can you provide the sorted lineup of minions? It is guaranteed that each minion's name is unique.
+
+
+Input
+The first line contains a number 
+n, indicating there are data entries for 
+n minions. Following this are 
+n lines, each containing the data for a minion separated by spaces. The data are in the following order：name, height, number of hair strands, age, and number of eyes.
+
+All numerical values for the minion data range from 
+0 to 1,000.
+Names consist of lowercase English letters only and are no longer than 30 characters.
+
+Output
+Please output the sorted result, with a total of n lines, each line containing the name of a minion.
+
+5
+john 15 3 5 1
+peter 16 3 7 2
+kiki 16 3 7 2
+yuii 17 2 7 1
+van 17 2 7 2
+
+Sample Output 1
+
+john
+kiki
+peter
+van
+yuii
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+struct minion
+{
+    string name;
+    int height;
+    int hair;
+    int age;
+    int eye;
+
+};
+bool cmp(minion &a, minion &b)
+{
+    if (a.height != b.height)
+    {
+        return a.height < b.height;
+    }
+    if (a.hair != b.hair)
+    {
+        return a.hair > b.hair;
+    }
+    if (a.age != b.age)
+    {
+        return a.age < b.age;
+    }
+    if (a.eye != b.eye)
+    {
+        return a.eye > b.eye;
+    }
+    return a.name < b.name;
+}
+
+int main()
+{
+    int n;
+    cin >> n;
+    vector<minion> minions(n);
+    for (int i = 0; i < n; ++i)
+    {
+        cin >> minions[i].name >> minions[i].height >> minions[i].hair >> minions[i].age >> minions[i].eye;
+    }
+
+    sort(minions.begin(), minions.end(), cmp);
+
+    for (minion &c : minions)
+    {
+        cout << c.name << endl;
+    }
+
+    return 0;
+}

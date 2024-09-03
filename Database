@@ -1,0 +1,102 @@
+### Description
+
+There is a database with some students' names and birthdays. Please sort these data and print them in the specified format.
+
+The input date is expressed in (YYYY-mm-dd).
+
+For each student, there is a group number. The group number is the remainder of the sum of ASCII codes for all 10 characters in the date, divided by 10.
+
+Sorting method:
+
+1. Sort group numbers from small to large.
+2. If the group numbers are the same, sort ages from youngest to oldest.
+3. If the birthdays are the same, sort names in dictionary order.
+
+The output date format needs to be converted (see output description).
+
+### Input
+- The first line consists of an integer `n` which indicates that there are `n` student records.
+- The next `n` lines each have a student's name and birthday.
+  
+  Constraints:
+- `0 < n ≤ 100000`
+- Date format is `YYYY-mm-dd`
+- Name length `≤ 10`
+
+### Output
+- Print the sorted data: group number, birthday, and name of the students.
+- The output date format is `mm/dd/yy`.
+- If the input is `YYYY-mm-dd`, output should be `mm/dd/YY`.
+
+### Example
+If the input is:
+```
+3
+Alice 2000-01-01
+Bob 2001-02-02
+Charlie 1999-12-31
+```
+
+Output:
+```
+2 01/01/00 Alice
+4 02/02/01 Bob
+8 12/31/99 Charlie
+```
+
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+
+using namespace std;
+
+struct Student {
+    string name;
+    string birthday;
+    int group;
+};
+
+// 計算組別編號（進一步優化版本）
+int calculateGroup(const string& date) {  // 即使 input 有姓名跟要處理的string ，可以用函式分開處理，string 部分
+    int sum = 0;
+    for (char c : date) {
+        sum += c;  // 直接使用字符的 ASCII 值，遍歷每一個 char，之後再用 int 拉出 ASCII 的值 
+    }
+    return sum % 10;
+}
+
+// 轉換日期格式
+string convertDate(const string& date) {
+    return date.substr(5, 2) + "/" + date.substr(8, 2) + "/" + date.substr(2, 2);
+}
+
+// 比較函數用於排序
+bool compareStudents(const Student& a, const Student& b) {
+    if (a.group != b.group) return a.group < b.group;  //按組別編號由小到大 Sortgroup numbers from small to large
+    if (a.birthday != b.birthday) return a.birthday > b.birthday;   //按年紀小到大
+    return a.name < b.name;  // 字典排序
+}
+
+
+
+int main() {
+    int n;
+    cin >> n;
+
+    vector<Student> students(n);  // 建立一個 vector 儲存每個人的個資
+
+    for (int i = 0; i < n; i++) {
+        cin >> students[i].name >> students[i].birthday;  // 儲存每一個學生的名字跟生日
+        students[i].group = calculateGroup(students[i].birthday);  // 使用 calculateGroup 的函數，return 出來是一個int,再把他存入group 裡面
+    }
+
+    sort(students.begin(), students.end(), compareStudents); // sort 比較函數
+
+    for (const auto& student : students) {
+        cout << student.group << " " << convertDate(student.birthday) << " " << student.name << endl;
+    }
+
+    return 0;
+}

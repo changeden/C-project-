@@ -1,0 +1,95 @@
+### Description
+
+Due to recent rains, water has pooled in various places in Farmer John's field, which is represented by a rectangle of \(N \times M\) squares \((1 \leq N \leq 100; 1 \leq M \leq 100)\).
+
+Each square contains either water (`W`) or dry land (`.`). A pond is defined as a connected set of squares containing water, where a square is considered adjacent to all eight of its neighbors. Given a diagram of Farmer John's field, determine how many ponds have formed.
+
+### Input
+- There are multiple test cases. Each test case consists of \(N + 1\) lines.
+- The first line of each test case contains two integers \(N\) and \(M\), separated by a space.
+- The next \(N\) lines each contain \(M\) characters, where each character is either `'W'` or `'.'`, representing a row of Farmer John's field. There are no spaces between the characters in each line.
+
+### Output
+- For each test case, output a single line indicating the number of ponds.
+
+### Example
+**Input:**
+```
+3 5
+W..W.
+.W...
+..W..
+1 1
+W
+```
+
+**Output:**
+```
+3
+1
+``` 
+
+Each test case counts the connected water patches (`W`) and outputs the total number of distinct ponds in the field.
+
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int N, M; 
+vector<vector<char>> field;  建立一個矩陣 vector raw 的長度是 N, vector column 長度是M
+
+// 分別建立 x, y 上下左右，右上，左下，右下，左上，共八格。
+// 舉例: 一次走一步 dx 是 -1 , dy是 -1: 代表下面回圈遍利一次走到左下 。
+int dx[8] = {-1, -1, -1, 0, 0, 1, 1, 1};
+int dy[8] = {-1, 0, 1, -1, 1, -1, 0, 1};
+
+
+void dfs(int x, int y) {
+    // Mark the current cell as visited by setting it to '.'
+    field[x][y] = '.';
+    
+    // // 分別走 x, y 上下左右，右上，左下，右下，左上，共八格。
+    for (int i = 0; i < 8; ++i) {
+        int nx = x + dx[i];
+        int ny = y + dy[i];
+        
+        //檢查新位置是否在範圍內，且新位置是否也是水域
+        if (nx >= 0 && nx < N && ny >= 0 && ny < M && field[nx][ny] == 'W') {
+            dfs(nx, ny);  // 如果是，則遞迴呼叫 dfs(nx, ny);，繼續標記這個水域的其他部分。
+        }
+    }
+}
+
+int main() {
+    while (cin >> N >> M) {
+        // Initialize the field grid with N rows and M columns
+        field = vector<vector<char>>(N, vector<char>(M)); //初始化 field 矩陣為 N 行 M 列。
+        
+        // 讀取每一行的字元資料。
+        for (int i = 0; i < N; ++i) {
+            for (int j = 0; j < M; ++j) {
+                cin >> field[i][j];
+            }
+        }
+        
+        int ponds = 0;  //用來計算水池的數量。
+        
+        //	如果發現一個水域（‘W’），則表示找到一個新的水池：
+        for (int i = 0; i < N; ++i) {
+            for (int j = 0; j < M; ++j) {
+                // 如果發現一個水域（‘W’），則表示找到一個新的水池：
+                if (field[i][j] == 'W') {
+                    dfs(i, j);  // 	呼叫 dfs(i, j); 來標記整個水池。
+                    ++ponds;    // 	計數器 ++ponds; 增加一。
+                }
+            }
+        }
+        
+        // Output the number of ponds for the current test case
+        cout << ponds << endl;
+    }
+    
+    return 0;
+}

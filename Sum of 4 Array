@@ -1,0 +1,90 @@
+### Description
+
+Given four integer arrays `nums1`, `nums2`, `nums3`, and `nums4`, all of length \( n \) \((1 \leq n \leq 200)\), return the number of tuples \((i, j, k, l)\) such that:
+
+\[
+0 \leq i, j, k, l < n
+\]
+
+And:
+
+\[
+\text{nums1}[i] + \text{nums2}[j] + \text{nums3}[k] + \text{nums4}[l] = 0
+\]
+
+### Input
+- There are multiple test cases, each occupying 5 lines.
+- The first line of each test case is an integer \( n \), which represents the length of the arrays.
+- The next four lines are the array elements of `nums1`, `nums2`, `nums3`, `nums4` in order.
+
+### Output
+- For each test case, output a line indicating the number of tuples \((i, j, k, l)\).
+
+### Example
+**Input:**
+```
+3
+1 2 -1
+2 -1 -2
+-1 2 1
+0 2 -2
+```
+
+**Output:**
+```
+4
+```
+
+In this example, there are 4 tuples \((i, j, k, l)\) that satisfy the condition where the sum of elements is zero.
+
+
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+
+using namespace std;
+
+int countZeroTuples(vector<int>& nums1, vector<int>& nums2, vector<int>& nums3, vector<int>& nums4)  //參數：接受四個整數數組作為參數。
+{
+    unordered_map<int, int> sumMap; 
+    int count = 0;
+
+    // 計算 nums1 和 nums2 的所有兩兩組合的總和，並存入 sumMap
+    for (int i = 0; i < nums1.size(); ++i) {
+        for (int j = 0; j < nums2.size(); ++j) {
+            int sum = nums1[i] + nums2[j]; // 遍歷每個倆倆的和
+            sumMap[sum]++;  // sumMap 是計算兩個數相加之合，出現的次數，所以出現的map 是一個 pair, key是sum, value是這個sum出現的次數
+        }
+    }
+
+    // Check sums of pairs from nums3 and nums4
+    for (int k = 0; k < nums3.size(); ++k) {
+        for (int l = 0; l < nums4.size(); ++l) {
+            int target = -(nums3[k] + nums4[l]); // 遍歷每個倆倆的和，如果加了(-)，跟sum1 + sum2 一樣代表四個 sum 相加等於 0
+           
+            if (sumMap.find(target) != sumMap.end()) {  //	檢查是否存在：使用 if (sumMap.find(target) != sumMap.end()) 來判斷 target 是否在 sumMap 中。
+                count += sumMap[target]; pair 裡面的value 計數器中加一
+            }
+        }
+    }
+
+    return count;
+}
+
+int main() {
+    int n;
+    while (cin >> n) {
+        vector<int> nums1(n), nums2(n), nums3(n), nums4(n); // 初始化四個 vector, 各有 n 個值
+        
+        // 把每一個數字寫入 vector 裡面 
+        for (int i = 0; i < n; ++i) cin >> nums1[i];
+        for (int i = 0; i < n; ++i) cin >> nums2[i];
+        for (int i = 0; i < n; ++i) cin >> nums3[i];
+        for (int i = 0; i < n; ++i) cin >> nums4[i];
+
+        int result = countZeroTuples(nums1, nums2, nums3, nums4);   //給一個變數把函數return 出來的int 存到result
+
+        cout << result << endl;
+    }
+    return 0;
+}

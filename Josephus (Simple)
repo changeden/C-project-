@@ -1,0 +1,114 @@
+There are now n people in a circle. Each is numbered from 
+1 to n in clockwise order. Everyone has a name. The first person who counts off is number 1. Write a program to execute the following commands:
+next x
+Report to x in clockwise, output the name of 
+x, and remove x from the circle. The next count starts with the next person in the clockwise direction. It is guaranteed that there will be at least 
+1 person.
+print
+Output the the number of remaining people first, then start from the current counting head, and output the names of all people clockwise. Output one line for each person's name. If there is no one remains, please outputNone.
+
+Input
+The first line has two integers n,k
+n,k, which means there are n individuals and k commands. The next n lines represent the names of people from 1 to n in order.
+Output
+Output in accroding to the requirements of each instruction.
+
+輸出next的人名時，前方加上remove。比如說移除了Alice，請輸出remove Alice。
+
+When meets the commandsnext, add aremovein front of the person's name.
+
+For example, If you removeAlice, please printremove Alice.
+
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+struct People {
+    string name;
+    People* next; // // 指向下一個人的指標
+    People(string n) : name(n), next(nullptr) {}  // 構造函數，初始化 name 和 next 指標
+};
+
+typedef People* pp;  //	定義了一個新類型 pp，它是指向 People 結構的指標類型，方便後續代碼中的指標操作。
+
+void print(pp head, int rest) {
+    if (rest == 0) {
+        cout << "0" << endl;
+        cout << "None" << endl;
+        return;
+    }
+    cout << rest << endl;
+    pp current = head;
+    for (int i = 0; i < rest; ++i) {
+        cout << current->name << endl;  print 出節點名字
+        current = current->next;  //往下一步走
+    }
+}
+
+	// print 函數用於打印當前環狀列表中的人數和名字。
+	// 如果 rest 為 0，表示沒有剩下的人，輸出 "0" 和 "None"，然後結束函數。
+	// 否則，輸出剩餘人數 rest，然後從 head 開始逐個打印每個人的名字。
+
+pp next(pp head, int steps) {
+    for (int i = 1; i < steps; ++i) {
+        head = head->next;
+    }
+    cout << "remove " << head->name << endl;
+    pp temp = head->next; //  暫存下一個人的指標
+    head->name = temp->name; //  將下一個人的名字拷貝到當前節點
+    head->next = temp->next; // 當前節點指向下下一個節點
+    delete temp; // 刪除下一個人
+    return head; // 返回當前節點作為新的 head
+}
+
+int main() {
+    int n, k; // n 表示人數，k 表示指令數
+    cin >> n >> k;
+
+    string name;
+    cin >> name;
+    People* first = new People(name);  // 創建第一個人
+    pp head = first;                  // 環狀鏈表的頭指標
+    pp prev = first;                  // 用於連結新節點的上一個人指標
+
+     // 建立環狀鏈表
+    for (int i = 1; i < n; ++i) {
+        cin >> name;
+        pp newPerson = new People(name);
+        prev->next = newPerson;        // 將前一個人指向新的人
+        prev = newPerson;            // 更新 prev 為新的人
+    }
+
+    // 將最後一個人指向第一個人，形成環
+    prev->next = first;
+
+    int restPeople = n;  // 記錄剩下的人數
+    string command;
+    int steps;
+
+   
+    for (int i = 0; i < k; ++i) {
+        cin >> command;
+        if (command == "print") {
+            print(head, restPeople);
+        } else if (command == "next") {
+            cin >> steps;
+            head = next(head, steps);
+            --restPeople;   // 移除一個人後剩餘人數減 1
+        }
+    }
+
+  // 清理剩餘的節點
+    while (restPeople > 0) {
+        pp temp = head->next;
+        delete head;
+        head = temp;
+        --restPeople;
+    }
+
+    return 0;
+}
+
+
+
